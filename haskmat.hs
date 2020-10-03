@@ -36,7 +36,8 @@ mTranspose :: Matrix -> Matrix
 mTranspose a = if mCheck a then calculation else error "Invalid Shape."
   where
     calculation = foldr mAdd z (concat [[mSet z (j, i) a_item | (j, a_item) <- zip [1..] row] | (i, row) <- zip [1..] a])
-    z = mZeros (mSize a)
+    z = mZeros (snd s, fst s)
+    s = (mSize a)
 
 mMul :: Matrix -> Matrix -> Matrix
 mMul a b = if snd (mSize a) == fst (mSize b) then calculation else error "Shape does not permit multiplication."
