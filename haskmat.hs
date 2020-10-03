@@ -74,3 +74,6 @@ mMul a b = if snd (mSize a) == fst (mSize b) then calculation else error "Shape 
         ]
       )
     z = mZeros (fst (mSize a), snd (mSize b))
+
+mScale :: Matrix -> Int -> Matrix
+mScale a b = [[item*b | item <- row] | row <- a]
