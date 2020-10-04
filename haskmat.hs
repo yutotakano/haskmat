@@ -1,12 +1,12 @@
-data Matrix a = Matrix [[a]] | Scalar a deriving Show
+data MatrixType a = Matrix [[a]] | Scalar a deriving Show
 
-mCheck :: Num a => Matrix a -> Bool
+mCheck :: Num a => MatrixType a -> Bool
 mCheck (Matrix a) = and [length row == length top_row | row <- rows]
   where
     top_row = head a
     rows = tail a
 
-mSize :: Num a => Matrix a -> (Int, Int)
+mSize :: Num a => MatrixType a -> (Int, Int)
 mSize (Scalar a) = error "Invalid call to mSize on a Scalar."
 mSize (Matrix a) = if mCheck (Matrix a) then calculation else error "Invalid Shape."
   where
@@ -14,13 +14,13 @@ mSize (Matrix a) = if mCheck (Matrix a) then calculation else error "Invalid Sha
     top_row = head a
     rows = tail a
 
-mZeros :: (Num a) => (Int, Int) -> Matrix a
+mZeros :: (Num a) => (Int, Int) -> MatrixType a
 mZeros (m, n) = Matrix $ replicate m (replicate n 0)
 
-mOnes :: (Num a) => (Int, Int) -> Matrix a
+mOnes :: (Num a) => (Int, Int) -> MatrixType a
 mOnes (m, n) = Matrix $ replicate m (replicate n 1)
 
-mSet :: (Num a) => Matrix a -> (Int, Int) -> a -> Matrix a
+mSet :: (Num a) => MatrixType a -> (Int, Int) -> a -> MatrixType a
 mSet (Scalar a) (_,_) _ = error "Invalid call to mSet on a Scalar."
 mSet (Matrix a) (n_i, n_j) val = Matrix $ [
     [
@@ -28,7 +28,7 @@ mSet (Matrix a) (n_i, n_j) val = Matrix $ [
     ] | (i, row) <- zip [1..] a
   ]    
 
-mGet :: (Num a) => Matrix a -> (Int, Int) -> a
+mGet :: (Num a) => MatrixType a -> (Int, Int) -> a
 mGet (Scalar a) (_,_) = error "Invalid call to mGet on a Scalar."
 mGet (Matrix a) (i, j) = desired_item
   where
@@ -36,7 +36,7 @@ mGet (Matrix a) (i, j) = desired_item
     desired_row = get_item i a
     desired_item = get_item j desired_row
 
-mAdd :: (Num a) => Matrix a -> Matrix a -> Matrix a
+mAdd :: (Num a) => MatrixType a -> MatrixType a -> MatrixType a
 mAdd (Scalar a) (Scalar b) = Scalar (a + b)
 mAdd (Scalar a) (Matrix b) = error "Invalid call to mAdd on a Scalar and Matrix."
 mAdd (Matrix a) (Scalar b) = error "Invalid call to mAdd on a Scalar and Matrix."
@@ -50,7 +50,7 @@ mAdd (Matrix a) (Matrix b) = if mSize (Matrix a) == mSize (Matrix b) then calcul
     -- this honestly took a while to come up with my sleepy brain
     -- loop through each row (with index using zip), then loop through each item (with another index), drop items from b and add them
 
-mSub :: (Num a) => Matrix a -> Matrix a -> Matrix a
+mSub :: (Num a) => MatrixType a -> MatrixType a -> MatrixType a
 mSub (Scalar a) (Scalar b) = Scalar (a - b)
 mSub (Matrix a) (Scalar b) = error "Invalid call to mSub on a Scalar and Matrix."
 mSub (Scalar a) (Matrix b) = error "Invalid call to mSub on a Scalar and Matrix."
@@ -62,7 +62,7 @@ mSub (Matrix a) (Matrix b) = if mSize (Matrix a) == mSize (Matrix b) then calcul
         ] | (i, row) <- zip [0..] a
       ]
 
-mTranspose :: (Num a) => Matrix a -> Matrix a
+mTranspose :: (Num a) => MatrixType a -> MatrixType a
 mTranspose (Scalar a) = error "Invalid call to mTranspose on a Scalar."
 mTranspose (Matrix a) = if mCheck (Matrix a) then calculation else error "Invalid Shape."
   where
@@ -76,7 +76,7 @@ mTranspose (Matrix a) = if mCheck (Matrix a) then calculation else error "Invali
     z = mZeros (snd s, fst s)
     s = (mSize $ Matrix a)
 
-mMul :: (Num a) => Matrix a -> Matrix a -> Matrix a
+mMul :: (Num a) => MatrixType a -> MatrixType a -> MatrixType a
 mMul (Scalar a) (Scalar b) = Scalar (a*b)
 mMul (Matrix a) (Scalar b) = Matrix $ [[item*b | item <- row] | row <- a]
 mMul (Scalar a) (Matrix b) = Matrix $ [[item*a | item <- row] | row <- b]
