@@ -7,44 +7,61 @@
 
 ## Usage
 
+Creation of a Matrix:
+
+```hs
+ghci> george = Matrix [[1,2],[3,4]]
+ghci> fred = Matrix [[1,2,3],[4,5,6]]
+ghci> ron = Scalar 5
+```
+
 Basic get/set operations:
 
 ```hs
-ghci> mSize [[1,2,3],[4,5,6]]
-(2,3)
+ghci> mSize george
+(2,2)
 
-ghci> mGet [[1,2],[3,4]] (1,2)
+ghci> mGet george (1,2)
 2
 
-ghci> mSet [[1,2],[3,4]] (1,2) 100
-[[1,100],[3,4]]
+ghci> mSet george (1,2) 100
+Matrix [[1,100],[3,4]]
 ```
 
 Generating certain matrices:
 
 ```hs
 ghci> mZeros (4,2)
-[[0,0],[0,0],[0,0],[0,0]]
+Matrix [[0,0],[0,0],[0,0],[0,0]]
 
 ghci> mOnes (1,3)
-[[1,1,1]]
+Matrix [[1,1,1]]
 ```
 
 Matrix operations:
 
 ```hs
-ghci> mAdd [[1,2],[3,4]] [[5,6],[7,8]]
-[[6,8],[10,12]]
+ghci> mAdd george george
+Matrix [[2,4],[6,8]]
 
-ghci> mSub [[1,2],[3,4]] [[5,6],[7,8]]
-[[-4,-4],[-4,-4]]
+ghci> mSub fred fred
+Matrix [[0,0,0],[0,0,0]]
 
-ghci> mTranspose [[1,2,3],[4,5,6]]
-[[1,4],[2,5],[3,6]]
+ghci> mTranspose fred
+Matrix [[1,4],[2,5],[3,6]]
 
-ghci> mMul [[1,2],[3,4],[5,6]] [[1,2,3],[4,5,6]]
-[[9,12,15],[19,26,33],[29,40,51]]
+ghci> mMul george fred
+Matrix [[9,12,15],[19,26,33]]
 
-ghci> mScale [[1,2,3]] 100
-[[100,200,300]]
+ghci> mMul george ron
+Matrix [[5,10],[15,20]]
+```
+
+More complicated examples:
+
+```hs
+ghci> (⊗) = mMul
+ghci> (⌛) = mAdd
+ghci> ((george ⊗ fred) ⊗ (Scalar 150)) ⌛ (mOnes (fst $ mSize george, snd $ mSize fred))
+Matrix [[1351,1801,2251],[2851,3901,4951]]
 ```
